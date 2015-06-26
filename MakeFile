@@ -1,0 +1,11 @@
+# Make file for gitterlite
+#
+
+CC=gcc
+LIBS=-lncurses
+
+all: gitterlite
+
+gitterlite: 
+	$(CC) -o src/gitterlite.c $(LIBS)
+
