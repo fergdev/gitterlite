@@ -1,9 +1,42 @@
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <ncurses.h>
 #include <curl/curl.h>
-int main()
+void gitterLogin();
+char *clientCode;
+char *clientSecret;
+
+int main(int argc, char *argv[])
 {
-    char username[100];
+    int index; 
+    int opt;
+    while((opt = getopt(argc, argv, "cs")) != -1){
+
+        switch(opt)
+        {
+            case'c':clientCode=optarg;break;//client code
+            case's':clientSecret=optarg;break;//client secret
+            defaut:
+                fprintf(stderr, "Usage %s [-cs]\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+    }    
+    for (index = optind; index < argc; index++)
+    {
+        printf("Non-option argument %s\n", argv[index]);
+    }
+    gitterLogin(); 
+    return 0;
+}
+void gitterLogin()
+{
+    char *clientId;
+    char *clientSecret;
+    char *code;
+    char *redirectURI;
+    char *username[100];
     CURL *curl;
     CURLcode res;
   
@@ -20,7 +53,11 @@ int main()
     curl = curl_easy_init();
     if(curl)
     {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://example.com");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://gitter.im/login/oauth/token");
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, ("client_id=%s&client_secret=%s&code=%s&grant_type=authorization_code&redirect_uri=%s",clientId, clientSecret,code,redirectURI));
+
+
+
         /*example.com is redirected, so we tell libcurl to follow reddirection*/
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
@@ -34,5 +71,5 @@ int main()
     getch();
     endwin();			/* End curses mode		  */
 
-	return 0;
+
 }
